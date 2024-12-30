@@ -4,11 +4,36 @@ import {
   PatientEntry,
   NonSensitivePatientEntry,
   NewPatientEntry,
+  EntryEntry,
+  NewEntryEntry,
 } from "../types";
 
 const getEntries = (): PatientEntry[] => {
   return PatientData;
 };
+
+const addEntry = (
+  entry: NewEntryEntry,
+  patientId: string
+): EntryEntry | undefined => {
+  const patient = PatientData.find((d) => d.id === patientId);
+
+  if (patient) {
+    const newPatientEntry = {
+      id: uuidv4(),
+      ...entry,
+    };
+    if (patient.entries) {
+      patient.entries = patient.entries.concat(newPatientEntry);
+    } else {
+      patient.entries = [newPatientEntry];
+    }
+
+    return newPatientEntry;
+  }
+  return undefined;
+};
+
 const findById = (id: string): PatientEntry | undefined => {
   const entry = PatientData.find((d) => d.id === id);
   return entry;
@@ -34,6 +59,7 @@ const addPatient = (entry: NewPatientEntry): PatientEntry => {
 };
 
 export default {
+  addEntry,
   getEntries,
   addPatient,
   getNonSensitiveEntries,
